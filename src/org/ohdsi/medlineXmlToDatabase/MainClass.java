@@ -24,9 +24,9 @@ import org.ohdsi.meshXmlToDatabase.MeshParserMain;
  */
 public class MainClass {
 
-	private static enum Action {
+	private enum Action {
 		ANALYSE, PARSE, PARSE_MESH
-	};
+	}
 
 	private static Action	action;
 	private static String	pathToIniFile;
@@ -49,11 +49,11 @@ public class MainClass {
 		String mode = null;
 		for (String arg : args) {
 			if (arg.startsWith("-")) {
-				if (arg.toLowerCase().equals("-analyse"))
+				if (arg.equalsIgnoreCase("-analyse"))
 					action = Action.ANALYSE;
-				else if (arg.toLowerCase().equals("-parse"))
+				else if (arg.equalsIgnoreCase("-parse"))
 					action = Action.PARSE;
-				else if (arg.toLowerCase().equals("-parse_mesh"))
+				else if (arg.equalsIgnoreCase("-parse_mesh"))
 					action = Action.PARSE_MESH;
 				else
 					mode = arg.toLowerCase();

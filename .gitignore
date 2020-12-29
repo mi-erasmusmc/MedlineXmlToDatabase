@@ -1,3 +1,6 @@
 /bin
 build/
 dist/
+
+.idea
+MedlineXmlToDatabase.iml

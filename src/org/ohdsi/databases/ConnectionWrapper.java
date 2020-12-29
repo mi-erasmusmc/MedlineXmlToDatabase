@@ -95,6 +95,7 @@ public class ConnectionWrapper {
 	}
 	
 	public void createDatabase(String database) {
+		execute("DROP SCHEMA IF EXISTS " + database + " CASCADE");
 		execute("CREATE SCHEMA " + database);
 	}
 	
@@ -203,7 +204,7 @@ public class ConnectionWrapper {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			if (e instanceof BatchUpdateException) {
-				System.err.println(((BatchUpdateException) e).getNextException().getMessage());
+				System.err.println(e.getNextException().getMessage());
 			}
 		}
 	}

@@ -34,7 +34,7 @@ public class XmlTools {
 		NodeList children = node.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
 			String name = children.item(j).getNodeName();
-			if ((name.equals("#text") && children.item(j).getNodeValue() != null && children.item(j).getNodeValue().trim().length() != 0) || name.equals("b")
+			if (("#text".equals(name) && children.item(j).getNodeValue() != null && children.item(j).getNodeValue().trim().length() != 0) || "b".equals(name)
 					|| name.equals("i") || name.equals("sup") || name.equals("sub"))
 				return true;
 		}

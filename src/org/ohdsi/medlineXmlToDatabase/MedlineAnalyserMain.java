@@ -69,7 +69,7 @@ public class MedlineAnalyserMain {
 
 	private void createDatabase(String server, String schema, String domain, String user, String password, String dateSourceType, String createSchema) {
 		ConnectionWrapper connectionWrapper = new ConnectionWrapper(server, domain, user, password, new DbType(dateSourceType));
-		if (createSchema.toLowerCase().equals("true"))
+		if (createSchema.equalsIgnoreCase("true"))
 			connectionWrapper.createDatabase(schema);
 		connectionWrapper.use(schema);
 		System.out.println("Creating tables");

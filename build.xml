@@ -10,7 +10,7 @@
     </target>
     <target name="compile">
        <mkdir dir="bin"/>
-       <javac srcdir="src" destdir="bin">
+       <javac srcdir="src" destdir="bin" compiler="javac1.8" target="1.8" source="1.8">
          <classpath>
            <pathelement path="lib/ojdbc6.jar"/>
          </classpath>
@@ -20,7 +20,8 @@
         <jar destfile="${dist}/MedlineXmlToDatabase.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.ohdsi.medlineXmlToDatabase.MainClass"/>
-                <attribute name="Class-Path" value=". MedlineXmlToDatabase_lib/dom4j-1.6.1.jar MedlineXmlToDatabase_lib/mysql-connector-java-5.1.30-bin.jar MedlineXmlToDatabase_lib/ojdbc5.jar MedlineXmlToDatabase_lib/ojdbc6.jar MedlineXmlToDatabase_lib/postgresql-9.3-1101.jdbc4.jar MedlineXmlToDatabase_lib/postgresql-9.3-1101.jdbc41.jar MedlineXmlToDatabase_lib/sqljdbc4.jar MedlineXmlToDatabase_lib/stax-api-1.0.1.jar MedlineXmlToDatabase_lib/xmlbeans-2.3.0.jar"/>
+                <attribute name="Class-Path"
+                           value=". MedlineXmlToDatabase_lib/dom4j-1.6.1.jar MedlineXmlToDatabase_lib/mysql-connector-java-5.1.30-bin.jar MedlineXmlToDatabase_lib/ojdbc5.jar MedlineXmlToDatabase_lib/ojdbc6.jar MedlineXmlToDatabase_lib/postgresql-42.2.18.jar MedlineXmlToDatabase_lib/sqljdbc4.jar MedlineXmlToDatabase_lib/stax-api-1.0.1.jar MedlineXmlToDatabase_lib/xmlbeans-2.3.0.jar"/>
             </manifest>
             <fileset dir="bin"/>
             <zipfileset dir="src/org/ohdsi/medlineXmlToDatabase" prefix="org/ohdsi/medlineXmlToDatabase" includes="*.csv"/>
@@ -31,8 +32,7 @@
         <copy file="lib/mysql-connector-java-5.1.30-bin.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
         <copy file="lib/ojdbc5.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
         <copy file="lib/ojdbc6.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
-        <copy file="lib/postgresql-9.3-1101.jdbc4.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
-        <copy file="lib/postgresql-9.3-1101.jdbc41.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
+        <copy file="lib/postgresql-42.2.18.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
         <copy file="lib/sqljdbc4.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
         <copy file="lib/stax-api-1.0.1.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>
         <copy file="lib/xmlbeans-2.3.0.jar" todir="${dist}/MedlineXmlToDatabase_lib"/>

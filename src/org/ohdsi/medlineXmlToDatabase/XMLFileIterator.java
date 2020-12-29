@@ -17,7 +17,6 @@ package org.ohdsi.medlineXmlToDatabase;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,18 +122,11 @@ public class XMLFileIterator implements Iterator<Document> {
 		@Override
 		protected void process() {
 			System.out.println("Processing " + file.getName());
-			try {
-				FileInputStream fileInputStream = new FileInputStream(file);
-				GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);
+			try (FileInputStream fileInputStream = new FileInputStream(file)) {
+				GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream, 65536);
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				document = builder.parse(gzipInputStream);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				e.printStackTrace();
-			} catch (SAXException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
 			}
 		}

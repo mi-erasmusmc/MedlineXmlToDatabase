@@ -63,13 +63,13 @@ public class MedlineCitationParser {
 	
 	public void parseAndInjectIntoDB(Node citation) {
 		findPmidAndVersion(citation);
-		
+
 		connectionWrapper.setBatchMode(true);
 		deleteAllForPmidAndVersion();
-		Map<String, String> keys = new HashMap<String, String>();
+		Map<String, String> keys = new HashMap<>(4);
 		keys.put("PMID", pmid);
 		keys.put("PMID_Version", pmid_version);
-		parseNode(citation, "", "MedlineCitation", new HashMap<String, String>(), true, keys);
+		parseNode(citation, "", "MedlineCitation", new HashMap<>(32), true, keys);
 		try {
 			connectionWrapper.setBatchMode(false);
 		} catch (Exception e) {
@@ -81,7 +81,6 @@ public class MedlineCitationParser {
 	/**
 	 * Record could be an update of a previous entry. Just in case, all previous data must be removed
 	 * 
-	 * @param sqls
 	 */
 	private void deleteAllForPmidAndVersion() {
 		for (String table : tables2Fields.keySet()) {
@@ -138,7 +137,7 @@ public class MedlineCitationParser {
 			if (fieldInfo.type == Types.VARCHAR || fieldInfo.type == Types.CLOB) {
 				String name = null;
 				for (String field : field2Value.keySet())
-					if (Abbreviator.abbreviate(field).toLowerCase().equals(fieldInfo.name.toLowerCase())) {
+					if (Abbreviator.abbreviate(field).equalsIgnoreCase(fieldInfo.name.toLowerCase())) {
 						name = field;
 						break;
 					}

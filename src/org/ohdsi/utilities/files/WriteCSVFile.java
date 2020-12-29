@@ -31,12 +31,10 @@ public class WriteCSVFile {
 		try {
 			stream = new FileOutputStream(filename, append);
 			bufferedWrite = new BufferedWriter(new OutputStreamWriter(stream, "UTF-8"), 10000);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 	
 	public WriteCSVFile(String filename) {
