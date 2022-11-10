@@ -43,10 +43,11 @@ import java.util.regex.Pattern;
 public class PmidToDate {
 
 
+    private static final String TABLE_NAME = "pmid_to_date";
     private final List<String> months = List.of("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
     private final Pattern yearPattern = Pattern.compile("(19|20)[0-9][0-9]");
-    private static final String TABLE_NAME = "pmid_to_date";
     private final ConnectionWrapper connectionWrapper;
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public PmidToDate(ConnectionWrapper connectionWrapper) {
         this.connectionWrapper = connectionWrapper;
@@ -71,8 +72,6 @@ public class PmidToDate {
 
         connectionWrapper.createTable(TABLE_NAME, fields, types, primaryKey);
     }
-
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public void insertDates(Document document) {
         connectionWrapper.setBatchMode(true);

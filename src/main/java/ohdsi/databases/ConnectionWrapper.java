@@ -47,7 +47,7 @@ import static ohdsi.databases.DbType.POSTGRESQL;
  *
  * @author MSCHUEMI
  */
-public class ConnectionWrapper implements AutoCloseable{
+public class ConnectionWrapper implements AutoCloseable {
 
     private static final Logger log = LogManager.getLogger(ConnectionWrapper.class.getName());
     private final Connection connection;
@@ -147,16 +147,16 @@ public class ConnectionWrapper implements AutoCloseable{
         }
 
         if (dbType.equals(MYSQL)) { // MySQL uses double quotes, escape using backslash
-        sql.append(") VALUES (\"");
-        first = true;
-        for (String field : fields) {
-            if (first)
-                first = false;
-            else
-                sql.append("\",\"");
-            sql.append(field2Value.get(field).replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\""));
-        }
-        sql.append("\");");
+            sql.append(") VALUES (\"");
+            first = true;
+            for (String field : fields) {
+                if (first)
+                    first = false;
+                else
+                    sql.append("\",\"");
+                sql.append(field2Value.get(field).replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\""));
+            }
+            sql.append("\");");
         } else if (dbType.equals(MSSQL) || dbType.equals(POSTGRESQL)) { // MSSQL uses single quotes, escape by doubling
             sql.append(") VALUES ('");
             first = true;
@@ -179,7 +179,7 @@ public class ConnectionWrapper implements AutoCloseable{
         sql.append(" VALUES (?");
         sql.append(",?".repeat(Math.max(0, columns.size() - 1)));
         sql.append(")");
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())){
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
             connection.setAutoCommit(false);
 
             for (Row row : rows) {
@@ -271,22 +271,22 @@ public class ConnectionWrapper implements AutoCloseable{
     }
 
     public boolean existsForPMIDAndVersion(String pmid, String pmidVersion) {
-     return existsForPMIDAndVersion(pmid, pmidVersion, null);
+        return existsForPMIDAndVersion(pmid, pmidVersion, null);
     }
 
     public boolean existsForPMIDAndVersion(String pmid, String pmidVersion, String table) {
         String target = table == null ? "medcit" : table;
-            try (PreparedStatement ps = connection.prepareStatement("SELECT pmid FROM " + target + " WHERE pmid = ? AND pmid_version = ? LIMIT 1")) {
-                ps.setString(1, pmid);
-                ps.setString(2, pmidVersion);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+        try (PreparedStatement ps = connection.prepareStatement("SELECT pmid FROM " + target + " WHERE pmid = ? AND pmid_version = ? LIMIT 1")) {
+            ps.setString(1, pmid);
+            ps.setString(2, pmidVersion);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return true;
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         return false;
     }
 
@@ -302,24 +302,6 @@ public class ConnectionWrapper implements AutoCloseable{
             throw new RuntimeException();
         }
 
-
-    }
-
-    public class QueryResult implements Iterable<Row> {
-        private String sql;
-
-        private List<DBRowIterator> iterators = new ArrayList<DBRowIterator>();
-
-        public QueryResult(String sql) {
-            this.sql = sql;
-        }
-
-        @Override
-        public Iterator<Row> iterator() {
-            DBRowIterator iterator = new DBRowIterator(sql);
-            iterators.add(iterator);
-            return iterator;
-        }
 
     }
 
@@ -359,17 +341,66 @@ public class ConnectionWrapper implements AutoCloseable{
         return fieldInfos;
     }
 
+    public QueryResult query(String sql) {
+        return new QueryResult(sql);
+    }
+
+    public void setDateFormat() {
+        if (!dbType.equals(MYSQL)) {
+            try (Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)) {
+                if (dbType.equals(POSTGRESQL)) {
+                    stmt.execute("SET datestyle = \"ISO, MDY\"");
+                } else {
+                    stmt.execute("SET dateformat DMY;");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void dropTableIfExists(String table) {
+        if (dbType.equals(MYSQL)) {
+            execute("DROP TABLE IF EXISTS " + table);
+        } else if (dbType.equals(POSTGRESQL)) {
+            try (Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                stmt.execute("TRUNCATE TABLE " + table);
+                stmt.execute("DROP TABLE " + table);
+            } catch (Exception e) {
+                // do nothing
+            }
+        } else if (dbType.equals(MSSQL)) {
+            execute("IF OBJECT_ID('" + table + "', 'U') IS NOT NULL DROP TABLE " + table + ";");
+        } else {
+            throw new RuntimeException("Could not execute statement, unknown dbType " + dbType);
+        }
+    }
+
+    public class QueryResult implements Iterable<Row> {
+        private String sql;
+
+        private List<DBRowIterator> iterators = new ArrayList<DBRowIterator>();
+
+        public QueryResult(String sql) {
+            this.sql = sql;
+        }
+
+        @Override
+        public Iterator<Row> iterator() {
+            DBRowIterator iterator = new DBRowIterator(sql);
+            iterators.add(iterator);
+            return iterator;
+        }
+
+    }
+
     public class FieldInfo {
         public int type;
         public String name;
         public int length;
     }
 
-    public QueryResult query(String sql) {
-        return new QueryResult(sql);
-    }
-
-    private class DBRowIterator implements Iterator<Row>,AutoCloseable {
+    private class DBRowIterator implements Iterator<Row>, AutoCloseable {
 
         private ResultSet resultSet;
 
@@ -378,13 +409,13 @@ public class ConnectionWrapper implements AutoCloseable{
         private Set<String> columnNames = new HashSet<String>();
 
         public DBRowIterator(String sql) {
-                sql.trim();
-                if (sql.endsWith(";"))
-                    sql = sql.substring(0, sql.length() - 1);
-           try {
-               Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-               resultSet = statement.executeQuery(sql);
-               hasNext = resultSet.next();
+            sql.trim();
+            if (sql.endsWith(";"))
+                sql = sql.substring(0, sql.length() - 1);
+            try {
+                Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                resultSet = statement.executeQuery(sql);
+                hasNext = resultSet.next();
             } catch (SQLException e) {
                 System.err.println(sql);
                 System.err.println(e.getMessage());
@@ -441,38 +472,6 @@ public class ConnectionWrapper implements AutoCloseable{
 
         @Override
         public void remove() {
-        }
-    }
-
-    public void setDateFormat() {
-        if (!dbType.equals(MYSQL)) {
-            try (Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE)){
-                if (dbType.equals(POSTGRESQL)) {
-                    stmt.execute("SET datestyle = \"ISO, MDY\"");
-                } else {
-                    stmt.execute("SET dateformat DMY;");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void dropTableIfExists(String table) {
-        if (dbType.equals(MYSQL)) {
-            execute("DROP TABLE IF EXISTS " + table);
-        }
-        else if (dbType.equals(POSTGRESQL)) {
-            try (Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)){
-                stmt.execute("TRUNCATE TABLE " + table);
-                stmt.execute("DROP TABLE " + table);
-            } catch (Exception e) {
-                // do nothing
-            }
-        } else if (dbType.equals(MSSQL)) {
-            execute("IF OBJECT_ID('" + table + "', 'U') IS NOT NULL DROP TABLE " + table + ";");
-        } else {
-            throw new RuntimeException("Could not execute statement, unknown dbType " + dbType);
         }
     }
 }

@@ -41,17 +41,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MedlineCitationParser {
 
+    public static final String PMID_VERSION_CONSTANT = "PMID_Version";
     private static final Logger log = LogManager.getLogger(MedlineCitationParser.class.getName());
-
     private static final String MEDLINE_CITATION = "MedlineCitation";
     private static final String VERSION = "Version";
     private static final String PMID_CONSTANT = "PMID";
-    public static final String PMID_VERSION_CONSTANT = "PMID_Version";
     private final OneToManySet<String, String> tables2Fields = new OneToManySet<>();
     private final OneToManyList<String, FieldInfo> tables2FieldInfos = new OneToManyList<>();
+    private final ConnectionWrapper connectionWrapper;
     private String pmid;
     private String pmidVersion;
-    private final ConnectionWrapper connectionWrapper;
 
     public MedlineCitationParser(ConnectionWrapper connectionWrapper, String schema) {
         this.connectionWrapper = connectionWrapper;
