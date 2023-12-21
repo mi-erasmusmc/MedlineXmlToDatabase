@@ -29,6 +29,8 @@ public class Abbreviator {
     public static final List<Pair<String, String>> termToAbbr = List.of(
             new Pair<>("medlinecitation", "medcit"),
             new Pair<>("article", "art"),
+            new Pair<>("investigator", "inv"),
+            new Pair<>("affiliation", "aff"),
             new Pair<>("databank", "db"));
 
     public static String abbreviate(String name) {
