@@ -15,8 +15,6 @@
  ******************************************************************************/
 package ohdsi.utilities.files;
 
-import ohdsi.utilities.StringUtilities;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +95,7 @@ public class Row {
             if (data.size() > index)
                 data.set(index, "[" + fieldName + ": " + data.get(index) + "]");
         }
-        return StringUtilities.join(data, ",");
+        return String.join(",", data);
     }
 
     public void remove(String field) {

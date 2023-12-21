@@ -1,7 +1,6 @@
 package ohdsi.meshXmlToDatabase;
 
 import ohdsi.databases.InsertableDbTable;
-import ohdsi.utilities.StringUtilities;
 import ohdsi.utilities.files.Row;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,7 +97,7 @@ public class MainMeshParser extends DefaultHandler {
         }
 
         public String toString() {
-            return StringUtilities.join(tags, ".");
+            return String.join(".", tags);
         }
     }
 

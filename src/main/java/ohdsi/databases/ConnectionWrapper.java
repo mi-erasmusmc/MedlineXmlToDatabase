@@ -17,7 +17,6 @@ package ohdsi.databases;
 
 import ohdsi.medlineXmlToDatabase.Abbreviator;
 import ohdsi.medlineXmlToDatabase.MedlineCitationAnalyser.VariableType;
-import ohdsi.utilities.StringUtilities;
 import ohdsi.utilities.files.Row;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -175,7 +174,7 @@ public class ConnectionWrapper implements AutoCloseable {
     public void insertIntoTable(String tableName, List<Row> rows, boolean emptyStringToNull) {
         List<String> columns = rows.get(0).getFieldNames();
         StringBuilder sql = new StringBuilder("INSERT INTO " + tableName);
-        sql.append(" (").append(StringUtilities.join(columns, ",")).append(")");
+        sql.append(" (").append(String.join(",", columns)).append(")");
         sql.append(" VALUES (?");
         sql.append(",?".repeat(Math.max(0, columns.size() - 1)));
         sql.append(")");
@@ -220,7 +219,7 @@ public class ConnectionWrapper implements AutoCloseable {
             sql.append("  ").append(fields.get(i)).append(" ").append(types.get(i));
         }
         if (primaryKey != null && !primaryKey.isEmpty())
-            sql.append(",\n  PRIMARY KEY (").append(StringUtilities.join(primaryKey, ",")).append(")\n");
+            sql.append(",\n  PRIMARY KEY (").append(String.join(",", primaryKey)).append(")\n");
         sql.append(");\n\n");
         execute(Abbreviator.abbreviate(sql.toString()));
     }

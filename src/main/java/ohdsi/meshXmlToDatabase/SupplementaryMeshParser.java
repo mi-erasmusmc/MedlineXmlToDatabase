@@ -106,7 +106,7 @@ public class SupplementaryMeshParser extends DefaultHandler {
         }
 
         public String toString() {
-            return StringUtilities.join(tags, ".");
+            return String.join(".", tags);
         }
     }
 

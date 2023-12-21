@@ -15,33 +15,19 @@
  ******************************************************************************/
 package ohdsi.utilities;
 
-import java.util.Collection;
-import java.util.Iterator;
 
 public class StringUtilities {
 
-    public static String join(Collection<?> s, String delimiter) {
-        StringBuffer buffer = new StringBuffer();
-        Iterator<?> iter = s.iterator();
-        if (iter.hasNext()) {
-            buffer.append(iter.next().toString());
-        }
-        while (iter.hasNext()) {
-            buffer.append(delimiter);
-            buffer.append(iter.next().toString());
-        }
-        return buffer.toString();
-    }
 
     public static String join(Object[] objects, String delimiter) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         if (objects.length != 0)
-            buffer.append(objects[0].toString());
+            b.append(objects[0].toString());
         for (int i = 1; i < objects.length; i++) {
-            buffer.append(delimiter);
-            buffer.append(objects[i].toString());
+            b.append(delimiter);
+            b.append(objects[i].toString());
         }
-        return buffer.toString();
+        return b.toString();
     }
 
     public static boolean isInteger(String string) {

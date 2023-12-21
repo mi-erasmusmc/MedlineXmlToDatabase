@@ -68,10 +68,11 @@ public class MeshParserMain {
     }
 
     private void generateAncestorTable(InsertableDbTable outAncestor) {
-        Map<String, PairInfo> pairToInfo = new HashMap<String, PairInfo>();
-        for (String treeNumber1 : treeNumberToUi.keySet()) {
-            String parts[] = treeNumber1.split("\\.");
-            String ui1 = treeNumberToUi.get(treeNumber1);
+        Map<String, PairInfo> pairToInfo = new HashMap<>();
+        for (Map.Entry<String, String> entry : treeNumberToUi.entrySet()) {
+            String treeNumber1 = entry.getKey();
+            String[] parts = treeNumber1.split("\\.");
+            String ui1 = entry.getValue();
             for (int i = 0; i < parts.length; i++) {
                 int distance = parts.length - i - 1;
                 String treeNumber2 = StringUtilities.join(Arrays.copyOfRange(parts, 0, i + 1), ".");
@@ -89,8 +90,9 @@ public class MeshParserMain {
             }
         }
 
-        for (String pair : pairToInfo.keySet()) {
-            PairInfo pairInfo = pairToInfo.get(pair);
+        for (Map.Entry<String, PairInfo> pairPariInfo : pairToInfo.entrySet()) {
+            String pair = pairPariInfo.getKey();
+            PairInfo pairInfo = pairPariInfo.getValue();
             Row row = new Row();
             row.add("ancestor_ui", pair.split("_")[1]);
             row.add("descendant_ui", pair.split("_")[0]);
